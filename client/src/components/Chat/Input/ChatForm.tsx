@@ -27,6 +27,7 @@ import { useGetStartupConfig } from '~/data-provider';
 import { mainTextareaId, BadgeItem } from '~/common';
 import PendingQuoteChips from './PendingQuoteChips';
 import AttachFileChat from './Files/AttachFileChat';
+import { TarsPromptsButton } from './TarsPrompts';
 import FileFormChat from './Files/FileFormChat';
 import TextareaHeader from './TextareaHeader';
 import PromptsCommand from './PromptsCommand';
@@ -171,7 +172,7 @@ const ChatForm = memo(function ChatForm({
     isSubmitting,
   });
 
-  const { submitMessage, submitPrompt } = useSubmitMessage();
+  const { submitMessage, submitPrompt, insertPrompt } = useSubmitMessage();
 
   const handleKeyUp = useHandleKeyUp({
     index,
@@ -366,13 +367,18 @@ const ChatForm = memo(function ChatForm({
                 isRTL ? 'flex-row-reverse' : 'flex-row',
               )}
             >
-              <div className={`${isRTL ? 'mr-2' : 'ml-2'}`}>
+              <div className={cn('flex items-center', isRTL ? 'mr-2' : 'ml-2')}>
                 <AttachFileChat
                   conversation={conversation}
                   disableInputs={disableInputs}
                   files={files}
                   setFiles={setFiles}
                   setFilesLoading={setFilesLoading}
+                />
+                <TarsPromptsButton
+                  domainId={conversation?.domain_id}
+                  insertPrompt={insertPrompt}
+                  disabled={disableInputs || isNotAppendable}
                 />
               </div>
               <BadgeRow
@@ -458,6 +464,7 @@ function ChatFormWrapper({ index = 0, placeholder }: { index?: number; placehold
       conversation?.useResponsesApi,
       conversation?.model,
       conversation?.maxContextTokens,
+      conversation?.domain_id,
       hasMessages,
     ],
   );
